@@ -1,1 +1,13 @@
+# NAME:		Zhenghao Li
+# EMAIL:	lizhenghao99@g.ucla.edu
+# ID:		704971934
 
+# List of content:
+
+lab4c_tcp.c:	c source file for creating executable lab4c_tcp
+
+lab4c_tls.c:	c source file for creating executable lab4c_tls
+
+Makefile:		Makefile with targets: default, clean, dist
+
+README:			this file
