@@ -1,3 +1,25 @@
-# NAME:   Zhenghao Li
-# EMAIL:  lizhenghao99@g.ucla.edu
-# ID:     704971934
+# NAME:		Zhenghao Li
+# EMAIL:	lizhenghao99@g.ucla.edu
+# ID:		704971934
+
+# Beaglebone information:
+
+Serial number:	BBGW18031276
+Mac address:	2CF7F10678FB
+
+
+# List of content:
+
+my_beaglebone.jpg:	selfie with beaglebone
+
+connected.png:		screen shot of ifconfig wlan0 section
+
+copy.png:			screen shot of sftp sesssion copying lab4a.c to beaglebone
+
+build_run.png:		screen shot of compiling and executing lab4a
+
+git.png:			screen shot of git clone
+
+Makefile:			Makefile with target dist
+
+README:				this file
