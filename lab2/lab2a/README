@@ -1,1 +1,107 @@
+# NAME: 	Zhenghao Li
+# EMAIL:	lizhenghao99@g.ucla.edu
+# ID:		704971934
 
+
+# list of content:
+
+lab2_add.c: 	implementing shared variable add function test
+SortedList.h:	header file for implementing sorted linked list
+SortedList.c:	implementing list operations for sorted linked list
+lab2_list.c:	implementing shared linked list operations test
+
+Makefile:		Makefile with targets: build, tests, graphs, dist, clean
+
+lab2_add.csv:	csv output for lab2_add
+lab2_list.csv:	csv output for lab2_list
+
+lab2_add-1.png
+lab2_add-2.png
+lab2_add-3.png
+lab2_add-4.png
+lab2_add-5.png:
+				graphs generated for lab2_add
+
+lab2_list-1.png
+lab2_list-2.png
+lab2_list-3.png
+lab2_list-4.png:
+				graphs generated for lab2_list
+
+README:			This file
+
+test.sh:		bash script used for generating csv files
+
+lab2_add.gp
+lab2_list.gp:
+				scripts used for generating graphs
+
+# lab2_add:
+
+add-none: no synchronization and no yield.
+	It takes more than 1000 iterations on low threads or more than 12 threads
+	to consistently result in non-zero failure.
+
+QUESTION 2.1.1:
+	Because when the number of iteration is small, the completion of each
+	thread is too fast to be interupted by the schedular, thus no race 
+	condition is appearing. 
+
+
+add-yield-none: no synchronization but yield.
+	It takes more than 2 threads and 10 iterations to consistently result in
+	non-zero failure.
+
+QUESTION 2.1.2:
+	--yield is much slower because it manually calls the schedular to 
+	deschedule the current thread, making thread switching much more frequent.
+	The additional time is contributed by the overhead of context switch.
+	It is not possible to get valid per-operation timings under current 
+	implementation because most of the time is consumed by context switching 
+	rather than the operation itself. However, if we change the clock id to 
+	CLOCK_THREAD_CPU_TIME, it is possible to monitor the time consumed only 
+	during thread operations. 
+
+QUESTION 2.1.3:
+	The average cost drop with increasing iterations because with more 
+	iterations in each thread, the overhead of thread creation becomes less
+	significant compared to the total time. If we want to know how many 
+	iterations are ideal to run, we could monitor the function by increasing
+	the number of iterations to the point that the change in average cost 
+	becomes significantly less in relation with the increasing iterations.
+	This suggest we have arrive at a number that is enought to eliminate 
+	most of the impact of thread overhead.
+
+QUESTION 2.1.4:
+	All options perform similarly for low numbers of threads because context
+	switching in these situations is rare, so the protection procedures will
+	not have a significant impact on performance.
+	The three protected operations slows done as the number of threads rises
+	because the protection procedures will hang the current thread if a thread
+	switch occurs, and by increasing the number of threads, thread switch
+	becomes much more frequent, subsequently increasing operation cost for each
+	thread. 
+
+# lab2_list
+
+QUESTION 2.2.1:
+	The cost of mutex-protected operation grows much faster in sorted list, 
+	whereas it is almost constant in add once reach a thread count that 
+	is high enough. This is due to that list operations are by themselves 
+	much more expansive than a single addition. They are more prone to be
+	interupted and thus put asleep by the protection, contributing to an 
+	increasing cost per operation as thread count goes up.
+
+QUESTION 2.2.2:
+	With my current implementation, the cost of mutex is almost always
+	lower than spinlock at the time of testing, with both of them increasing as
+	thread count goes up. This is resulted from the fact that mutex put threads
+	to sleep whereas spinlock hang the threads when encountering contention.
+	This results in spinlock wasting more time, and it becomes more obvious 
+	as thread count goes up.
+
+	NOTE: The results varies drastically between testing on lnxsrv07 and
+		lnxsrv09. The analysis in this file is referred to results from
+		lnxsrv09, whereas the included output and graphs in the tarball
+		are generated from lnxsrv07, due to the fact that the load on 
+		lnxsrv09 makes it impossible to pass the sanity check.
