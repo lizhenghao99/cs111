@@ -1,1 +1,15 @@
+# NAME:		Zhenghao Li
+# EMAIL:	lizhenghao99@g.ucla.edu
+# ID:		704971934
 
+# List of content:
+
+lab3b.py:	python source file for generating analysis output
+
+lab3b.sh:	bash script to run lab3b.py with python3 taking 1 argument
+
+Makefile:	defalt: create executable lab3b that links to lab3b.sh
+			dist:	create tarball deliverable
+			clean:	remove lab3b and tarball
+
+README:		this file
