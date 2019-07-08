@@ -1,1 +1,84 @@
+# NAME:		Zhenghao Li
+# EMAIL:	lizhenghao99@g.ucla.edu
+# ID:		704971934
+
+# list of content:
+
+SortedList.h:   header file for implementing sorted linked list
+SortedList.c:   implementing list operations for sorted linked list
+lab2_list.c:    implementing shared linked list operations test
+
+Makefile:       Makefile with targets: 
+					default, tests, profile, graphs, dist, clean
+
+lab2b_list.csv:  csv output for lab2_list
+
+lab2b_1.png
+lab2b_2.png
+lab2b_3.png
+lab2b_4.png
+lab2b_5.png:
+                graphs generated for lab2_list
+
+README:         This file
+
+test.sh:        bash script used for generating csv file
+
+lab2b_list.gp: 	script used for generating graphs
+
+profile.out:	profiling output
+
+
+# answering questions
+
+QUESTION 2.3.1
+	In 1 and 2 thread list tests, most of the CPU time is spent in the 
+	list operations because there is little to account for thread creation 
+	and synchronization overhead as there is little contention.  
+	
+	The list operations are the most expensive parts because it is linearly 
+	proportional to the list length (number of iterations), and for a test
+	with high iterations low threads, it is reasonable to believe the impact
+	of the expensive list operations is the most obvious. 
+	
+	In high-thread spin-lock tests, most of the CPU time is being spent spining
+	while threads trying to accquire the same lock. 
+
+	In high-thread mutex tests, most of the CPU time is being spent during 
+	context switch, as threads are constantly being put to sleep and woken up.
+
+QUESTION 2.3.2
+	As seen from the profiling tool output, the line in s_lcok at which 
+	the while loop spin checks the result from __sync_lock_test_and_set 
+	is consuming more than 90% of total CPU time when runing on high-thread.
+
+	This operation becomes significantly more expensive on high-thread because
+	the increase in contention over the spin-lock constantly hangs a great
+	number of threads, making them wasting lots of CPU time while spinning.
+
+QUESTION 2.3.3
+	Average lock-wait time rises dramatically with number of threads because 
+	the increase in contention over the mutex lock constantly causes threads
+	to be put to sleep and woken up. This result in frequent context switches,
+	which can introduce a large amount of overhead.
+
+	Completion time per operation rises less dramatically because lock-wait	time
+	is saturated by the operation completions of the currently running thread.
+	
+	Wait-time per operation can go up higher than completion time per operation
+	because there are multiple threads waiting for the same lock, whereas 
+	operation completion is independent for each thread. Thus, the overlaping 
+	wait-time for each thread added together is possible to be larger than the
+	non-overlaping completion time for the sum of each individual thread.
+
+QUESTION 2.3.4
+	The throughput increases as the number of list increases. 
+
+	The throughput will continue to increase until the number of lists is large
+	enough to neglect the contention between threads. With wait-for-lock time
+	having little impact to performance, throughput will not further increase.
+
+	No. Partitioning a list into sublists effectively shortens the list
+	operations, as those are associated with list length. This decrease in
+	critical operations along with having multiple locks improves performance. 
 

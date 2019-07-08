@@ -1,0 +1,78 @@
+Total: 1157 samples
+    1011  87.4%  87.4%     1012  87.5% s_lock
+     105   9.1%  96.5%      105   9.1% __strcmp_sse42
+      17   1.5%  97.9%       73   6.3% SortedList_lookup
+      12   1.0%  99.0%       62   5.4% SortedList_insert
+       5   0.4%  99.4%        5   0.4% hash
+       2   0.2%  99.6%        3   0.3% __random
+       1   0.1%  99.7%        1   0.1% 0x00007ffd6397465f
+       1   0.1%  99.7%       76   6.6% MultiList_lookup
+       1   0.1%  99.8%        1   0.1% __random_r
+       1   0.1%  99.9%        1   0.1% _init
+       1   0.1% 100.0%        4   0.3% main
+       0   0.0% 100.0%       63   5.4% MultiList_insert
+       0   0.0% 100.0%        1   0.1% __GI___clock_gettime
+       0   0.0% 100.0%     1153  99.7% __clone
+       0   0.0% 100.0%        4   0.3% __libc_start_main
+       0   0.0% 100.0%        4   0.3% _start
+       0   0.0% 100.0%     1153  99.7% list_s
+       0   0.0% 100.0%        3   0.3% rand
+       0   0.0% 100.0%     1153  99.7% start_thread
+ROUTINE ====================== s_lock in /u/cs/ugrad/zhenghao/Desktop/cs111/lab2b/lab2_list.c
+  1011   1012 Total samples (flat / cumulative)
+     .      .   58: {
+     .      .   59:     lock->flag = 0;
+     .      .   60: }
+     .      .   61: 
+     .      .   62: void s_lock(lock_t *lock, long long *total)
+---
+     .      .   63: {
+     .      .   64: 	struct timespec time_start;
+     .      .   65:     struct timespec time_end;
+     .      .   66:     long long time_lock_single = 0;
+     .      1   67: 	clock_gettime(CLOCK_MONOTONIC, &time_start);
+  1011   1011   68:     while (__sync_lock_test_and_set(&(lock->flag), 1) == 1)
+     .      .   69:         ; // spin
+     .      .   70: 	clock_gettime(CLOCK_MONOTONIC, &time_end);
+     .      .   71: 	long long ssec = (long long) time_start.tv_sec;
+     .      .   72:     long long snsec = (long long) time_start.tv_nsec;
+     .      .   73:     long long esec = (long long) time_end.tv_sec;
+     .      .   74:     long long ensec = (long long) time_end.tv_nsec;
+     .      .   75:     time_lock_single = (esec - ssec)*1e9 + (ensec - snsec);;
+     .      .   76: 	*total += time_lock_single;
+     .      .   77: }
+---
+     .      .   78: 
+     .      .   79: void s_unlock(lock_t *lock)
+     .      .   80: {
+     .      .   81:     __sync_lock_release(&(lock->flag));
+     .      .   82: }
+ROUTINE ====================== s_lock in /u/cs/ugrad/zhenghao/Desktop/cs111/lab2b/lab2_list.c
+  1011   1012 Total samples (flat / cumulative)
+     .      .   58: {
+     .      .   59:     lock->flag = 0;
+     .      .   60: }
+     .      .   61: 
+     .      .   62: void s_lock(lock_t *lock, long long *total)
+---
+     .      .   63: {
+     .      .   64: 	struct timespec time_start;
+     .      .   65:     struct timespec time_end;
+     .      .   66:     long long time_lock_single = 0;
+     .      1   67: 	clock_gettime(CLOCK_MONOTONIC, &time_start);
+  1011   1011   68:     while (__sync_lock_test_and_set(&(lock->flag), 1) == 1)
+     .      .   69:         ; // spin
+     .      .   70: 	clock_gettime(CLOCK_MONOTONIC, &time_end);
+     .      .   71: 	long long ssec = (long long) time_start.tv_sec;
+     .      .   72:     long long snsec = (long long) time_start.tv_nsec;
+     .      .   73:     long long esec = (long long) time_end.tv_sec;
+     .      .   74:     long long ensec = (long long) time_end.tv_nsec;
+     .      .   75:     time_lock_single = (esec - ssec)*1e9 + (ensec - snsec);;
+     .      .   76: 	*total += time_lock_single;
+     .      .   77: }
+---
+     .      .   78: 
+     .      .   79: void s_unlock(lock_t *lock)
+     .      .   80: {
+     .      .   81:     __sync_lock_release(&(lock->flag));
+     .      .   82: }
