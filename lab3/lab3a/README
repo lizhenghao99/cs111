@@ -1,1 +1,14 @@
+# NAME:		Zhenghao Li
+# EMAIL:	lizhenghao99@g.ucla.edu
+# ID:		704971934
 
+
+# List of content:
+
+	lab3a.c:	source file for generating csv result from filesystem image
+
+	ext2_fs.h:	header file for filesystem structure declaration
+
+	Makefile:	Makefile with targets default, dist, clean
+
+	README:		this file
