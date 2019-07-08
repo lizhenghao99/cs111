@@ -1,0 +1,125 @@
+# NAME: 	Zhenghao Li
+# EMAIL: 	lizhenghao99@g.ucla.edu
+# ID:		704971934
+
+
+Benchmark #1:
+-------------
+
+### Test:
+
+(cat pg98_100.txt | sort -u | grep are > out1a)  2>> err1a
+
+./simpsh \
+	--rdonly pg98_100.txt \
+	--pipe \
+	--pipe \
+	--creat --trunc --wronly out1b \
+	--creat --trunc --wronly err1b \
+	--command 0 2 6 cat \
+	--command 1 4 6 sort -u \
+	--command 3 5 6 grep are \
+	--close 2 \
+	--close 4 \
+	--wait
+
+### Data:
+
+Bash Average:
+0m0.001s 0m0.004s
+0m0.944s 0m0.114s
+
+Dash Average:
+0m0.000000s 0m0.000000s
+0m0.930000s 0m0.100000s
+
+Simpsh Average:
+Bench-Self: User: 0.000371s Sys: 0.000374s
+Bench-Chld: User: 0.928156s Sys: 0.099614s
+
+
+
+Benchmark #2:
+-------------
+
+### Test:
+
+(tr a-z A-Z < pg98_100.txt | sort -r | wc -l > out2a) 2>err2a
+
+./simpsh \
+	--rdonly pg98_100.txt \
+	--pipe \
+	--pipe \
+	--creat --trunc --wronly out2b \
+	--creat --trunc --wronly err2b \
+	--command 0 2 6 tr a-z A-Z \
+	--command 1 4 6 sort -r \
+	--command 3 5 6 wc -l \
+	--close 2 \
+	--close 4 \
+	--wait
+
+### Data:
+
+Bash Average:
+0m0.002s 0m0.003s
+0m1.239s 0m0.436s
+
+Dash Average:
+0m0.000000s 0m0.000000s
+0m1.200000s 0m0.460000s
+
+Simpsh Average:
+Bench-Self: User: 0.000269s Sys: 0.000528s
+Bench-Chld: User: 1.219373s Sys: 0.430078s
+
+
+
+Benchmark #3:
+-------------
+
+### Test:
+// input file size is increased
+
+(sort -r < pg98_100.txt | tr -d [:space:] | grep i | cat pg98.txt - | sort -u > out3a) 2>> err3a
+
+./simpsh \
+	--rdonly pg98_100.txt \
+	--pipe \
+	--pipe \
+	--pipe \
+	--pipe \
+	--creat --trunc --wronly out3b \
+	--creat --append --wronly err3b \
+	--command 0 2 10 sort -r \
+	--command 1 4 10 tr -d [:space:] \
+	--command 3 6 10 grep i \
+	--command 5 8 10 cat pg98.txt - \
+	--command 7 9 10 sort -u \
+	--close 2 \
+	--close 4 \
+	--close 6 \
+	--close 8 \
+	--wait
+
+### Data:
+
+Bash Average:
+0m0.002s 0m0.004s
+0m12.572s 0m1.129s
+
+Dash Average:
+0m0.000000s 0m0.000000s
+0m12.620000s 0m1.080000s
+
+Simpsh Average:
+Bench-Self: User: 0.000050s Sys: 0.001015s
+Bench-Chld: User: 12.520558s Sys: 1.120110s
+
+
+
+Comparison
+----------
+
+Performance is almost identical across the three versions. 
+Among them, bash and dash performs equally well, while simpsh is slightly faster than bash and dash.

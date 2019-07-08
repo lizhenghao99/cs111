@@ -1,1 +1,112 @@
+# NAME:		Zhenghao Li
+# EMAIL:	lizhenghao99@g.ucla.edu
+# ID:		704971934
+
+# files included in tarball
+simpsh.c: 	the source file for simpsh
+Makefile:	Makefile with target default, clean, check, dist
+README:		this file
+test.sh:	script used for make check
+
+# simpsh.c:
+This is the source file for building simpsh, an alternative shell interaction
+to handle commands with file redirection using options. 
+
+Supported options:	--rdonly --wronly --command --verbose
+--append --cloexec --creat --directory --dysnc --excl --nofollow --nonblock
+--rsync --sync --trunc --rdwr --pipe --wait --close --verbose --abort
+--catch --ignore --default --pause
+
+Obstacles: The most challenging part is to tackle with the inability of getopt()
+to handle multiple arguments for a single opttion. I implemented this function
+by manually incrementing the optind variable and storing each argument into 
+allocated memory. On the other hand, I found it challenging to implement the 
+function for --wait to output the command and arguments for the terminated 
+process. At first I believed this can be achieved by the APIs within C library,
+but it is now obvious that I need to store that information manually with the 
+associated PID of said process.  
+
+Known issues: As it turned out, I had a misunderstanding about how the heap 
+is utilized when forking. I thought the parent and child shares the same vitual memory talbe, but they acutally have different tables with the same assignment.
+Thus, it is okay to free memory in parent as child is accessing. Currently, the
+implementation for --wait to output the terminated commands and their arguments
+is limited to 32 processes/commands for the convinience of implementing with 
+a stastic array. 
+
+# Makefile:
+default: 	build executable simpsh from simpsh.c
+clean:		remove simpsh simpsh.c lab1-704971394.tar.gz
+check:		invoke test.sh for testing
+dist:		create lab1-704971934.tar.gz for distribution
+
+# check.sh:
+A bash script with 3 test cases:
+
+#!/bin/bash
+
+
+# exec 2> /dev/null
+# check for --rdonly error
+touch testin.txt
+chmod -r testin.txt
+./simpsh --rdonly testin.txt 2> /dev/null
+if [ $? -ne 1 ]
+then
+	echo "test 1 failed"
+else
+	echo "test 1 passed"
+fi
+rm -f testin.txt
+
+# check for --rdonly --wronly --wronly --command
+touch a.txt b.txt c.txt d.txt
+flag2=0;
+echo "this is file a.txt" > a.txt
+./simpsh --rdonly a.txt --wronly b.txt --wronly c.txt --command 0 1 2 cat
+diff a.txt b.txt > /dev/null
+if [ $? -ne 0 ]
+then
+	flag2=1;
+fi
+diff c.txt d.txt >/dev/null
+if [ $? -ne 0 ]
+then 
+	flag2=1;
+fi
+if [ $flag2 -eq 1 ]
+then 
+	echo "test 2 failed"
+else
+	echo "test 2 passed"
+fi
+rm -f a.txt b.txt c.txt d.txt
+
+# check for --verbose --rdonly --wronly --wronly --command
+touch a b c output result verbose
+flag3=0;
+echo "Some text in a file." > a
+./simpsh --verbose --rdonly a --wronly b --wronly c --command 0 1 2 tr a-z A-Z > result
+echo "SOME TEXT IN A FILE." > output
+echo -e "--rdonly a\n--wronly b\n--wronly c\n--command 0 1 2 tr a-z A-Z " > verbose
+
+diff b output 
+if [ $? -ne 0 ]
+then
+	flag3=1;
+fi
+diff result verbose
+if [ $? -ne 0 ]
+then
+	flag3=1;
+fi
+if [ $flag3 -eq 1 ]
+then 
+	echo "test 3 failed"
+else
+	echo "test 3 passed"
+fi
+rm -f a b c output result verbose
+
+
+
 
