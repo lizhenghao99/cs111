@@ -1,0 +1,13 @@
+# NAME:		Zhenghao Li
+# EMAIL:	lizhenghao99@g.ucla.edu
+# ID:		704971934
+
+# List of content:
+
+lab4b.c:	C source file for reporting temperature reading
+
+Makefile:	Makefile supporting targets default, check, clean, dist
+
+smoke.sh:	simple smoke test for make check
+
+README:		this file
